@@ -374,11 +374,12 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
     html+=`<tr class="${cls}"><td>${medal||i+1}</td>`;
     row.forEach((cell, idx)=>{
       if(idx===0){
-        html+=`<td>${c}</td>``;
+        html+=`<td class="name">${cell}</td>`;
       } else {
         html+=`<td>${cell}</td>`;
       }
     });
+
 
     html+="</tr>";
   });
