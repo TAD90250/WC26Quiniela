@@ -130,6 +130,19 @@ td {
 .silver { background: #78350f; }
 .bronze { background: #1e3a8a; }
 
+/* ✅ Column A keeps medal colors */
+.standings-table tr.gold td:nth-child(1) {
+  background-color: #064e3b;
+}
+
+.standings-table tr.silver td:nth-child(1) {
+  background-color: #78350f;
+}
+
+.standings-table tr.bronze td:nth-child(1) {
+  background-color: #1e3a8a;
+}
+/* ✅ Column B keeps medal colors */
 .standings-table tr.gold .name {
   background-color: #064e3b;
 }
@@ -199,15 +212,37 @@ td {
   font-size: 12px;
 }
 
+.standings-table th:nth-child(1) {
+  background: #1f2937;
+}
+
+.standings-table th:nth-child(2) {
+  position: sticky;
+  left: 4ch;
+  z-index: 4; /* higher than td so it stays on top */
+  background: #1f2937; /* match header style */
+  text-align: left;
+  padding-left: 10px;
+}
+
 .standings-table td {
   padding: 10px;
   font-size: 13px;
   white-space: nowrap;
 }
 
-.standings-table .name {
+.standings-table th:nth-child(1),
+.standings-table td:nth-child(1) {
   position: sticky;
   left: 0;
+  top: 0;
+  z-index: 5;
+  background: #111827;
+}
+
+.standings-table .name {
+  position: sticky;
+  left: 4ch;
   background: #111827;
   z-index: 3;
   text-align: left;
