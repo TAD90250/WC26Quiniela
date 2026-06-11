@@ -14,16 +14,42 @@ body {
 
 /* ✅ HEADER */
 .header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 15px;
 }
 
+/* LEFT SIDE */
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ✅ TITLE */
 .title {
-  text-align: center;
   font-size: 22px;
   font-weight: bold;
+}
+
+/* ✅ TABS */
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav button {
+  padding: 8px 16px;
+  background: #1f2937;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.nav button.active {
+  background: #2563eb;
 }
 
 /* ✅ POT */
@@ -55,28 +81,7 @@ body {
   font-weight: bold;
 }
 
-/* ✅ Tabs */
-.nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 15px;
-}
-
-.nav button {
-  padding: 8px 16px;
-  margin: 0 6px;
-  background: #1f2937;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-}
-
-.nav button.active {
-  background: #2563eb;
-}
-
-/* ✅ Tabs */
+/* ✅ Tabs Content */
 .tab { display: none; }
 .tab.active { display: block; }
 
@@ -114,7 +119,7 @@ td {
   padding-left: 10px;
 }
 
-/* ✅ Column sizing */
+/* Column sizing */
 #standings th:nth-child(1), #standings td:nth-child(1) { width: 4ch; }
 #standings th:nth-child(3), #standings td:nth-child(3) { width: 8ch; }
 #standings th:nth-child(8), #standings td:nth-child(8),
@@ -124,7 +129,7 @@ td {
 #standings th:nth-child(2), #standings td:nth-child(2) { padding-right: 14px; }
 #standings th:nth-child(7), #standings td:nth-child(7) { padding-right: 14px; }
 
-/* ✅ Top 3 */
+/* medals */
 .gold { background: #064e3b; }
 .silver { background: #78350f; }
 .bronze { background: #1e3a8a; }
@@ -163,43 +168,43 @@ td {
 .rule-card h3 {
   color: #60a5fa;
 }
-
-.rule-card:hover {
-  transform: translateY(-2px);
-  transition: 0.2s ease;
-}
 </style>
 </head>
 
 <body>
 
+<!-- ✅ HEADER -->
 <div class="header">
+
+  <div class="header-left">
+    <div class="title">⚽ Mundial 2026 Quiniela</div>
+
+    <div class="nav">
+      <button class="active" onclick="showTab('standings', this)">Standings</button>
+      <button onclick="showTab('stats', this)">Team Stats</button>
+      <button onclick="showTab('rules', this)">Point System</button>
+    </div>
+  </div>
+
   <div class="pot-header" id="potHeader">Loading...</div>
-  <div class="title">⚽ Mundial 2026 Quiniela</div>
-  <div></div>
+
 </div>
 
-<div class="nav">
-  <button class="active" onclick="showTab('standings', this)">Standings</button>
-  <button onclick="showTab('stats', this)">Team Stats</button>
-  <button onclick="showTab('rules', this)">Point System</button>
-</div>
-
-<!-- STANDINGS -->
+<!-- ✅ STANDINGS -->
 <div id="standings" class="tab active">
   <div class="table-container">
     <div id="table1">Loading...</div>
   </div>
 </div>
 
-<!-- STATS -->
+<!-- ✅ STATS -->
 <div id="stats" class="tab">
   <div class="table-container">
     <div id="table2">Loading...</div>
   </div>
 </div>
 
-<!-- RULES -->
+<!-- ✅ RULES -->
 <div id="rules" class="tab">
 <div class="rules-wrapper">
 
@@ -208,15 +213,15 @@ td {
 <button onclick="switchLang('es', this)">Español</button>
 </div>
 
-<!-- ✅ ENGLISH -->
+<!-- ENGLISH -->
 <div id="rules-en">
 
 <div class="rule-card">
 <h3>⚽ All Matches</h3>
 <ul>
-<li>Goal Scored: 1 point <em>(Penalty shootout goals do not count)</em></li>
-<li>Clean Sheet: 1 point <em>(Penalty shootout goals do not count)</em></li>
-<li>Winning by 3 or More Goals: 1 point bonus <em>(Penalty shootout goals do not count)</em></li>
+<li>Goal Scored: 1 point (Penalty shootout goals do not count)</li>
+<li>Clean Sheet: 1 point (Penalty shootout goals do not count)</li>
+<li>Winning by 3 or More Goals: 1 point bonus (Penalty shootout goals do not count)</li>
 </ul>
 </div>
 
@@ -254,15 +259,15 @@ td {
 
 </div>
 
-<!-- ✅ SPANISH -->
+<!-- SPANISH -->
 <div id="rules-es" style="display:none;">
 
 <div class="rule-card">
 <h3>⚽ Todos los Partidos</h3>
 <ul>
-<li>Gol Anotado: 1 punto <em>(Los goles en tanda de penales no cuentan)</em></li>
-<li>Portería en Cero: 1 punto <em>(Los penales no cuentan)</em></li>
-<li>Victoria por 3 o más goles: 1 punto adicional <em>(Los penales no cuentan)</em></li>
+<li>Gol Anotado: 1 punto (Los goles en tanda de penales no cuentan)</li>
+<li>Portería en Cero: 1 punto (Los penales no cuentan)</li>
+<li>Victoria por 3 o más goles: 1 punto adicional (Los penales no cuentan)</li>
 </ul>
 </div>
 
@@ -282,7 +287,7 @@ td {
 </div>
 
 <div class="rule-card">
-<h3>🏆 Fase Eliminatoria (Excepto la Final)</h3>
+<h3>🏆 Fase Eliminatoria</h3>
 <ul>
 <li>Victoria: 2 puntos</li>
 <li>Bono: +1 punto por ganar en tanda de penales</li>
@@ -312,8 +317,8 @@ function showTab(tabId, btn) {
 }
 
 function switchLang(lang, btn) {
-  document.getElementById("rules-en").style.display = lang === "en" ? "block" : "none";
-  document.getElementById("rules-es").style.display = lang === "es" ? "block" : "none";
+  rules-en.style.display = lang === "en" ? "block" : "none";
+  rules-es.style.display = lang === "es" ? "block" : "none";
   document.querySelectorAll(".rules-toggle button").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
 }
