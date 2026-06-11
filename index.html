@@ -12,36 +12,45 @@ body {
   padding: 15px;
 }
 
-/* ✅ HEADER BAR */
+/* ✅ HEADER LAYOUT FIX */
 .header {
-  display: flex;
-  justify-content: space-between; /* left + right */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   margin-bottom: 15px;
 }
 
+/* ✅ LEFT (Pot) */
+.pot-header {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+/* ✅ CENTER TITLE */
 .title {
+  text-align: center;
   font-size: 22px;
   font-weight: bold;
 }
 
-/* ✅ POT HEADER CARDS */
-.pot-header {
+/* ✅ EMPTY RIGHT (keeps center balanced) */
+.header-right {
   display: flex;
-  gap: 10px;
+  justify-content: flex-end;
 }
 
-/* ✅ SMALL POT CARDS */
+/* ✅ POT CARDS */
 .pot-card {
   background: #1f2937;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 8px;
   text-align: center;
-  min-width: 90px;
+  min-width: 80px;
 }
 
 .pot-card.total {
-  background: #2563eb; /* highlight total */
+  background: #2563eb;
 }
 
 .pot-title {
@@ -77,73 +86,94 @@ body {
 .tab { display: none; }
 .tab.active { display: block; }
 
-/* ✅ Table */
+/* ✅ TABLE */
 .table-container {
   width: 100%;
   background: #111827;
   border-radius: 12px;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
+/* 🔥 IMPORTANT FIX: REMOVE table-layout fixed */
 table {
   width: 100%;
-  table-layout: fixed;
   border-collapse: collapse;
 }
 
+/* ✅ HEADER */
 th {
   background: #1f2937;
   padding: 6px;
-  font-size: 10px;
+  font-size: 11px;
   color: #9ca3af;
-  position: sticky;
-  top: 0;
+  text-align: center;
 }
 
+/* ✅ CELLS */
 td {
   padding: 6px;
   font-size: 11px;
   border-bottom: 1px solid #374151;
+  text-align: center;   /* ✅ CENTER DATA */
 }
 
-.rank {
-  font-weight: bold;
-  text-align: center;
+/* ✅ PLAYER COLUMN */
+#standings td:nth-child(2),
+#standings th:nth-child(2) {
+  text-align: left;   /* keep names readable */
+  padding-left: 10px;
 }
 
-/* ✅ TOP 3 */
-.gold { background: #064e3b; }
-.silver { background: #78350f; }
-.bronze { background: #1e3a8a; }
-
-/* ✅ Column tuning */
-#standings th:nth-child(1), #standings td:nth-child(1) { width: 4ch; }
-#standings th:nth-child(3), #standings td:nth-child(3) { width: 8ch; }
-#standings th:nth-child(8), #standings td:nth-child(8) { width: 6ch; }
-#standings th:nth-child(9), #standings td:nth-child(9) { width: 6ch; }
-
-/* spacing */
-#standings th:nth-child(2), #standings td:nth-child(2) {
-  padding-right: 14px;
-  white-space: nowrap;
-}
-#standings th:nth-child(7), #standings td:nth-child(7) {
-  padding-right: 14px;
+/* ✅ FIX OVERLAP (ALLOW CONTROLLED WRAP) */
+#standings th,
+#standings td {
+  white-space: nowrap;   /* default */
 }
 
-/* force single line B, D–G */
+/* ✅ ALLOW WRAP ONLY WHERE NEEDED */
 #standings th:nth-child(2),
+#standings td:nth-child(2),
 #standings th:nth-child(4),
 #standings th:nth-child(5),
 #standings th:nth-child(6),
 #standings th:nth-child(7),
-#standings td:nth-child(2),
 #standings td:nth-child(4),
 #standings td:nth-child(5),
 #standings td:nth-child(6),
 #standings td:nth-child(7) {
-  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* ✅ prevents overlap */
 }
+
+/* ✅ COLUMN WIDTH CONTROL */
+#standings th:nth-child(1),
+#standings td:nth-child(1) { width: 4ch; }
+
+#standings th:nth-child(3),
+#standings td:nth-child(3) { width: 8ch; }
+
+#standings th:nth-child(8),
+#standings td:nth-child(8),
+#standings th:nth-child(9),
+#standings td:nth-child(9) { width: 6ch; }
+
+/* ✅ SPACING */
+#standings th:nth-child(2),
+#standings td:nth-child(2) {
+  padding-right: 14px;
+}
+
+#standings th:nth-child(7),
+#standings td:nth-child(7) {
+  padding-right: 14px;
+}
+
+/* ✅ TOP 3 */
+.rank { font-weight: bold; }
+
+.gold { background: #064e3b; }
+.silver { background: #78350f; }
+.bronze { background: #1e3a8a; }
 
 </style>
 </head>
@@ -152,10 +182,16 @@ td {
 
 <!-- ✅ HEADER -->
 <div class="header">
+
+  <!-- LEFT: POT -->
+  <div class="pot-header" id="potHeader">Loading...</div>
+
+  <!-- CENTER: TITLE -->
   <div class="title">⚽ Mundial 2026 Quiniela</div>
 
-  <!-- ✅ POT (TOP RIGHT) -->
-  <div class="pot-header" id="potHeader">Loading...</div>
+  <!-- RIGHT (empty) -->
+  <div class="header-right"></div>
+
 </div>
 
 <!-- ✅ Tabs -->
@@ -171,7 +207,7 @@ td {
   </div>
 </div>
 
-<!-- ✅ Team Stats -->
+<!-- ✅ Stats -->
 <div id="stats" class="tab">
   <div class="table-container">
     <div id="table2">Loading...</div>
@@ -187,26 +223,29 @@ function showTab(tabId, btn) {
   btn.classList.add("active");
 }
 
-/* ✅ STANDINGS */
+/* ✅ STANDINGS FIXED */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
   let rows = data.trim().split("\n").map(r => r.split(","));
+
   const headers = rows[0];
   let body = rows.slice(1);
 
   body.sort((a, b) => Number(b[b.length - 1]) - Number(a[a.length - 1]));
 
   let html = "<table>";
+
   html += "<tr><th>#</th>";
   headers.forEach(h => html += `<th>${h}</th>`);
   html += "</tr>";
 
   body.forEach((row, i) => {
-    let medal = "", cls = "";
-    if (i === 0) { medal="🥇"; cls="gold"; }
-    else if (i === 1) { medal="🥈"; cls="silver"; }
-    else if (i === 2) { medal="🥉"; cls="bronze"; }
+
+    let medal="", cls="";
+    if(i===0){medal="🥇";cls="gold";}
+    else if(i===1){medal="🥈";cls="silver";}
+    else if(i===2){medal="🥉";cls="bronze";}
 
     html += `<tr class="${cls}">`;
     html += `<td class="rank">${medal || i+1}</td>`;
@@ -226,9 +265,9 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
 
   let html = "<table>";
   rows.forEach((row,i)=>{
-    html += "<tr>";
-    row.forEach(c => html += i===0?`<th>${c}</th>`:`<td>${c}</td>`);
-    html += "</tr>";
+    html+="<tr>";
+    row.forEach(c=> html+= i===0?`<th>${c}</th>`:`<td>${c}</td>`);
+    html+="</tr>";
   });
 
   html+="</table>";
