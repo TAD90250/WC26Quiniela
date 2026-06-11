@@ -15,7 +15,7 @@ body {
 /* ✅ HEADER */
 .header {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   margin-bottom: 15px;
 }
@@ -29,27 +29,29 @@ body {
 /* ✅ POT */
 .pot-header {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .pot-card {
   background: #1f2937;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
   text-align: center;
+  min-width: 90px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .pot-card.total {
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
 }
 
 .pot-title {
-  font-size: 10px;
+  font-size: 11px;
   color: #9ca3af;
 }
 
 .pot-value {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
@@ -64,9 +66,9 @@ body {
   padding: 8px 16px;
   margin: 0 6px;
   background: #1f2937;
-  color: white;
   border: none;
   border-radius: 6px;
+  color: white;
   cursor: pointer;
 }
 
@@ -83,7 +85,6 @@ body {
   width: 100%;
   background: #111827;
   border-radius: 12px;
-  overflow: hidden;
 }
 
 table {
@@ -106,33 +107,27 @@ td {
   text-align: center;
 }
 
-/* Player column left aligned */
+/* Player column */
 #standings td:nth-child(2),
 #standings th:nth-child(2) {
   text-align: left;
   padding-left: 10px;
 }
 
-/* ✅ COLUMN SIZING */
+/* ✅ Column sizing */
 #standings th:nth-child(1), #standings td:nth-child(1) { width: 4ch; }
 #standings th:nth-child(3), #standings td:nth-child(3) { width: 8ch; }
 #standings th:nth-child(8), #standings td:nth-child(8),
 #standings th:nth-child(9), #standings td:nth-child(9) { width: 6ch; }
 
 /* spacing */
-#standings th:nth-child(2), #standings td:nth-child(2) {
-  padding-right: 14px;
-}
-#standings th:nth-child(7), #standings td:nth-child(7) {
-  padding-right: 14px;
-}
+#standings th:nth-child(2), #standings td:nth-child(2) { padding-right: 14px; }
+#standings th:nth-child(7), #standings td:nth-child(7) { padding-right: 14px; }
 
-/* ✅ TOP 3 */
+/* ✅ Top 3 */
 .gold { background: #064e3b; }
 .silver { background: #78350f; }
 .bronze { background: #1e3a8a; }
-
-.rank { font-weight: bold; }
 
 /* ✅ RULES */
 .rules-wrapper {
@@ -163,11 +158,15 @@ td {
   border-radius: 12px;
   padding: 15px;
   margin-bottom: 12px;
-  text-align: left;
 }
 
 .rule-card h3 {
   color: #60a5fa;
+}
+
+.rule-card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
 }
 </style>
 </head>
@@ -175,7 +174,7 @@ td {
 <body>
 
 <div class="header">
-  <div id="potHeader">Loading...</div>
+  <div class="pot-header" id="potHeader">Loading...</div>
   <div class="title">⚽ Mundial 2026 Quiniela</div>
   <div></div>
 </div>
@@ -186,74 +185,122 @@ td {
   <button onclick="showTab('rules', this)">Point System</button>
 </div>
 
-<!-- ✅ STANDINGS -->
+<!-- STANDINGS -->
 <div id="standings" class="tab active">
   <div class="table-container">
     <div id="table1">Loading...</div>
   </div>
 </div>
 
-<!-- ✅ TEAM STATS -->
+<!-- STATS -->
 <div id="stats" class="tab">
   <div class="table-container">
     <div id="table2">Loading...</div>
   </div>
 </div>
 
-<!-- ✅ RULES -->
+<!-- RULES -->
 <div id="rules" class="tab">
-  <div class="rules-wrapper">
+<div class="rules-wrapper">
 
-    <div class="rules-toggle">
-      <button class="active" onclick="switchLang('en', this)">English</button>
-      <button onclick="switchLang('es', this)">Español</button>
-    </div>
+<div class="rules-toggle">
+<button class="active" onclick="switchLang('en', this)">English</button>
+<button onclick="switchLang('es', this)">Español</button>
+</div>
 
-    <!-- EN -->
-    <div id="rules-en">
+<!-- ✅ ENGLISH -->
+<div id="rules-en">
 
-      <div class="rule-card">
-        <h3>⚽ All Matches</h3>
-        <ul>
-          <li>Goal Scored: 1 point</li>
-          <li>Clean Sheet: 1 point</li>
-          <li>Win by 3+ Goals: +1 bonus</li>
-        </ul>
-      </div>
+<div class="rule-card">
+<h3>⚽ All Matches</h3>
+<ul>
+<li>Goal Scored: 1 point <em>(Penalty shootout goals do not count)</em></li>
+<li>Clean Sheet: 1 point <em>(Penalty shootout goals do not count)</em></li>
+<li>Winning by 3 or More Goals: 1 point bonus <em>(Penalty shootout goals do not count)</em></li>
+</ul>
+</div>
 
-      <div class="rule-card">
-        <h3>🥅 Group Stage</h3>
-        <ul>
-          <li>Win: 3 points</li>
-          <li>Draw: 1 point</li>
-        </ul>
-      </div>
+<div class="rule-card">
+<h3>🥅 Group Stage</h3>
+<ul>
+<li>Win: 3 points</li>
+<li>Draw: 1 point</li>
+</ul>
+</div>
 
-    </div>
+<div class="rule-card">
+<h3>🎯 Advancement</h3>
+<ul>
+<li>Advance to Knockout Stage: 4 points</li>
+</ul>
+</div>
 
-    <!-- ES -->
-    <div id="rules-es" style="display:none;">
+<div class="rule-card">
+<h3>🏆 Knockout Stage (Excluding Final)</h3>
+<ul>
+<li>Win: 2 points</li>
+<li>Bonus: +1 point for winning by penalty shootout</li>
+</ul>
+</div>
 
-      <div class="rule-card">
-        <h3>⚽ Todos los Partidos</h3>
-        <ul>
-          <li>Gol Anotado: 1 punto</li>
-          <li>Portería en Cero: 1 punto</li>
-          <li>Victoria por 3 o más goles: 1 punto adicional</li>
-        </ul>
-      </div>
+<div class="rule-card">
+<h3>🥇 Final</h3>
+<ul>
+<li>Runner-Up: 2 points</li>
+<li>Champion: 3 points</li>
+<li>Bonus: +1 point for winning by penalty shootout</li>
+</ul>
+</div>
 
-      <div class="rule-card">
-        <h3>🥅 Fase de Grupos</h3>
-        <ul>
-          <li>Victoria: 3 puntos</li>
-          <li>Empate: 1 punto</li>
-        </ul>
-      </div>
+</div>
 
-    </div>
+<!-- ✅ SPANISH -->
+<div id="rules-es" style="display:none;">
 
-  </div>
+<div class="rule-card">
+<h3>⚽ Todos los Partidos</h3>
+<ul>
+<li>Gol Anotado: 1 punto <em>(Los goles en tanda de penales no cuentan)</em></li>
+<li>Portería en Cero: 1 punto <em>(Los penales no cuentan)</em></li>
+<li>Victoria por 3 o más goles: 1 punto adicional <em>(Los penales no cuentan)</em></li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🥅 Fase de Grupos</h3>
+<ul>
+<li>Victoria: 3 puntos</li>
+<li>Empate: 1 punto</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🎯 Avance</h3>
+<ul>
+<li>Avanzar a la Fase Eliminatoria: 4 puntos</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🏆 Fase Eliminatoria (Excepto la Final)</h3>
+<ul>
+<li>Victoria: 2 puntos</li>
+<li>Bono: +1 punto por ganar en tanda de penales</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🥇 Final</h3>
+<ul>
+<li>Subcampeón: 2 puntos</li>
+<li>Campeón: 3 puntos</li>
+<li>Bono: +1 punto por ganar en tanda de penales</li>
+</ul>
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
@@ -264,16 +311,14 @@ function showTab(tabId, btn) {
   btn.classList.add("active");
 }
 
-/* ✅ LANGUAGE SWITCH */
 function switchLang(lang, btn) {
   document.getElementById("rules-en").style.display = lang === "en" ? "block" : "none";
   document.getElementById("rules-es").style.display = lang === "es" ? "block" : "none";
-
   document.querySelectorAll(".rules-toggle button").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
 }
 
-/* ✅ STANDINGS */
+/* STANDINGS */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&output=csv")
 .then(r=>r.text())
 .then(data=>{
@@ -302,7 +347,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   table1.innerHTML=html;
 });
 
-/* ✅ TEAM STATS */
+/* STATS */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&output=csv")
 .then(r=>r.text())
 .then(data=>{
@@ -319,7 +364,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   table2.innerHTML=html;
 });
 
-/* ✅ POT */
+/* POT */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=669574522&output=csv")
 .then(r=>r.text())
 .then(data=>{
@@ -329,13 +374,12 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   rows.slice(1).forEach(row=>{
     let val=parseFloat(row[1].replace(/[$,]/g,""))||0;
     total+=val;
-
-    html+=`<div class="pot-card"><div>${row[0]}</div><strong>$${val}</strong></div>`;
+    html+=`<div class="pot-card"><div class="pot-title">${row[0]}</div><div class="pot-value">$${val}</div></div>`;
   });
 
-  html=`<div class="pot-card total"><div>Total</div><strong>$${total}</strong></div>`+html;
+  html=`<div class="pot-card total"><div>Total</div><div class="pot-value">$${total}</div></div>`+html;
 
-  document.getElementById("potHeader").innerHTML=html;
+  potHeader.innerHTML=html;
 });
 </script>
 
