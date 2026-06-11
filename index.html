@@ -38,14 +38,14 @@ h1 {
 
 /* ✅ Container */
 .table-container {
-  max-width: 1600px;
+  max-width: 1800px;
   margin: auto;
   background: #111827;
   border-radius: 16px;
   overflow-x: auto;
 }
 
-/* ✅ Hide inactive tabs */
+/* ✅ Tabs */
 .tab {
   display: none;
 }
@@ -58,9 +58,10 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1400px;
+  min-width: 1700px;
 }
 
+/* ✅ Header */
 th {
   background: #1f2937;
   padding: 10px;
@@ -68,38 +69,89 @@ th {
   color: #9ca3af;
   position: sticky;
   top: 0;
+  white-space: nowrap;
 }
 
+/* ✅ Cells */
 td {
   padding: 10px;
   border-bottom: 1px solid #374151;
   white-space: nowrap;
+  font-size: 13px;
 }
-
-/* ✅ Wrap Column B (Standings only) */
-#standings td:nth-child(3),
-#standings th:nth-child(3) {
-  white-space: normal;
-  word-break: break-word;
-  max-width: 250px;
-}
-
-/* ✅ Sticky first column */
-.name {
-  position: sticky;
-  left: 0;
-  background: #111827;
-}
-
-/* ✅ Styles */
-.rank { font-weight: bold; }
-.gold { background: #064e3b; }
-.silver { background: #78350f; }
-.bronze { background: #1e3a8a; }
 
 tr:hover {
   background: #1f2937;
 }
+
+/* ✅ Sticky Player column */
+.name {
+  position: sticky;
+  left: 0;
+  background: #111827;
+  text-align: left;
+  padding-left: 15px;
+  font-weight: 500;
+}
+
+/* ✅ Rank */
+.rank {
+  font-weight: bold;
+}
+
+/* ✅ Top 3 */
+.gold { background: #064e3b; }
+.silver { background: #78350f; }
+.bronze { background: #1e3a8a; }
+
+/* ✅ Column control */
+
+/* Rank */
+#standings th:nth-child(1),
+#standings td:nth-child(1) {
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Player */
+#standings th:nth-child(2),
+#standings td:nth-child(2) {
+  min-width: 180px;
+}
+
+/* Points (FIXED ✅) */
+#standings th:nth-child(3),
+#standings td:nth-child(3) {
+  min-width: 90px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Tier columns */
+#standings th:nth-child(4),
+#standings th:nth-child(5),
+#standings th:nth-child(6),
+#standings th:nth-child(7),
+#standings td:nth-child(4),
+#standings td:nth-child(5),
+#standings td:nth-child(6),
+#standings td:nth-child(7) {
+  min-width: 130px;
+}
+
+/* Stats columns */
+#standings th:nth-child(n+8),
+#standings td:nth-child(n+8) {
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Later rounds */
+#standings th:nth-child(n+12),
+#standings td:nth-child(n+12) {
+  min-width: 120px;
+}
+
 </style>
 </head>
 
@@ -128,7 +180,6 @@ tr:hover {
 </div>
 
 <script>
-/* ✅ Tab switching */
 function showTab(tabId, btn) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
@@ -137,10 +188,8 @@ function showTab(tabId, btn) {
   btn.classList.add("active");
 }
 
-/* ✅ Standings TABLE */
-const standingsURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&single=true&output=csv";
-
-fetch(standingsURL)
+/* ✅ Standings */
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
 
@@ -148,7 +197,6 @@ fetch(standingsURL)
   const headers = rows[0];
   let body = rows.slice(1);
 
-  /* ✅ Sort by last column */
   body.sort((a, b) => Number(b[b.length - 1]) - Number(a[a.length - 1]));
 
   let html = "<table>";
@@ -180,18 +228,15 @@ fetch(standingsURL)
   });
 
   html += "</table>";
-
   document.getElementById("table1").innerHTML = html;
 })
 .catch(err => {
-  console.error("Standings error:", err);
+  console.error(err);
   document.getElementById("table1").innerHTML = "Error loading standings";
 });
 
-/* ✅ Team Stats TABLE */
-const statsURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&single=true&output=csv";
-
-fetch(statsURL)
+/* ✅ Team Stats */
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
 
@@ -208,12 +253,7 @@ fetch(statsURL)
   });
 
   html += "</table>";
-
   document.getElementById("table2").innerHTML = html;
-})
-.catch(err => {
-  console.error("Stats error:", err);
-  document.getElementById("table2").innerHTML = "Error loading stats";
 });
 </script>
 
