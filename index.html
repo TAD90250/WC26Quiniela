@@ -58,9 +58,10 @@ body {
 /* ✅ Tabs */
 .nav {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-start; /* ✅ LEFT */
   margin-bottom: 15px;
 }
+
 
 .nav button {
   padding: 8px 16px;
@@ -76,10 +77,11 @@ body {
   background: #2563eb;
 }
 
+/* ✅ Tabs */
 .tab { display: none; }
 .tab.active { display: block; }
 
-/* ✅ TABLE (original kept) */
+/* ✅ TABLE */
 .table-container {
   width: 100%;
   background: #111827;
@@ -112,6 +114,16 @@ td {
   text-align: left;
   padding-left: 10px;
 }
+
+/* ✅ Column sizing */
+#standings th:nth-child(1), #standings td:nth-child(1) { width: 4ch; }
+#standings th:nth-child(3), #standings td:nth-child(3) { width: 8ch; }
+#standings th:nth-child(8), #standings td:nth-child(8),
+#standings th:nth-child(9), #standings td:nth-child(9) { width: 6ch; }
+
+/* spacing */
+#standings th:nth-child(2), #standings td:nth-child(2) { padding-right: 14px; }
+#standings th:nth-child(7), #standings td:nth-child(7) { padding-right: 14px; }
 
 /* ✅ Top 3 */
 .gold { background: #064e3b; }
@@ -153,7 +165,11 @@ td {
   color: #60a5fa;
 }
 
-/* ✅ ✅ NEW (STANDINGS ONLY) */
+.rule-card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}
+
 .standings-table {
   max-width: 1600px;
   overflow-x: auto;
@@ -175,10 +191,6 @@ td {
   padding: 10px;
   font-size: 13px;
   white-space: nowrap;
-}
-
-.standings-table tr:hover {
-  background-color: #1f2937;
 }
 
 .standings-table .name {
@@ -206,18 +218,122 @@ td {
   <button onclick="showTab('rules', this)">Point System</button>
 </div>
 
-<!-- ✅ STANDINGS (ONLY change: added class) -->
+<!-- STANDINGS -->
 <div id="standings" class="tab active">
   <div class="table-container standings-table">
     <div id="table1">Loading...</div>
   </div>
 </div>
 
-<!-- ✅ STATS -->
+<!-- STATS -->
 <div id="stats" class="tab">
   <div class="table-container">
     <div id="table2">Loading...</div>
   </div>
+</div>
+
+<!-- RULES -->
+<div id="rules" class="tab">
+<div class="rules-wrapper">
+
+<div class="rules-toggle">
+<button class="active" onclick="switchLang('en', this)">English</button>
+<button onclick="switchLang('es', this)">Español</button>
+</div>
+
+<!-- ✅ ENGLISH -->
+<div id="rules-en">
+
+<div class="rule-card">
+<h3>⚽ All Matches</h3>
+<ul>
+<li>Goal Scored: 1 point <em>(Penalty shootout goals do not count)</em></li>
+<li>Clean Sheet: 1 point <em>(Penalty shootout goals do not count)</em></li>
+<li>Winning by 3 or More Goals: 1 point bonus <em>(Penalty shootout goals do not count)</em></li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🥅 Group Stage</h3>
+<ul>
+<li>Win: 3 points</li>
+<li>Draw: 1 point</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🎯 Advancement</h3>
+<ul>
+<li>Advance to Knockout Stage: 4 points</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🏆 Knockout Stage (Excluding Final)</h3>
+<ul>
+<li>Win: 2 points</li>
+<li>Bonus: +1 point for winning by penalty shootout</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🥇 Final</h3>
+<ul>
+<li>Runner-Up: 2 points</li>
+<li>Champion: 3 points</li>
+<li>Bonus: +1 point for winning by penalty shootout</li>
+</ul>
+</div>
+
+</div>
+
+<!-- ✅ SPANISH -->
+<div id="rules-es" style="display:none;">
+
+<div class="rule-card">
+<h3>⚽ Todos los Partidos</h3>
+<ul>
+<li>Gol Anotado: 1 punto <em>(Los goles en tanda de penales no cuentan)</em></li>
+<li>Portería en Cero: 1 punto <em>(Los penales no cuentan)</em></li>
+<li>Victoria por 3 o más goles: 1 punto adicional <em>(Los penales no cuentan)</em></li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🥅 Fase de Grupos</h3>
+<ul>
+<li>Victoria: 3 puntos</li>
+<li>Empate: 1 punto</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🎯 Avance</h3>
+<ul>
+<li>Avanzar a la Fase Eliminatoria: 4 puntos</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🏆 Fase Eliminatoria (Excepto la Final)</h3>
+<ul>
+<li>Victoria: 2 puntos</li>
+<li>Bono: +1 punto por ganar en tanda de penales</li>
+</ul>
+</div>
+
+<div class="rule-card">
+<h3>🥇 Final</h3>
+<ul>
+<li>Subcampeón: 2 puntos</li>
+<li>Campeón: 3 puntos</li>
+<li>Bono: +1 punto por ganar en tanda de penales</li>
+</ul>
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
@@ -228,7 +344,14 @@ function showTab(tabId, btn) {
   btn.classList.add("active");
 }
 
-/* ✅ STANDINGS (ONLY loop changed) */
+function switchLang(lang, btn) {
+  document.getElementById("rules-en").style.display = lang === "en" ? "block" : "none";
+  document.getElementById("rules-es").style.display = lang === "es" ? "block" : "none";
+  document.querySelectorAll(".rules-toggle button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+/* STANDINGS */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&output=csv")
 .then(r=>r.text())
 .then(data=>{
@@ -249,10 +372,9 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
     else if(i===2){medal="🥉";cls="bronze";}
 
     html+=`<tr class="${cls}"><td>${medal||i+1}</td>`;
-
     row.forEach((cell, idx)=>{
       if(idx===0){
-        html+=`<td class="name">${cell}</td>`;
+        html+=`<td>${c}</td>``;
       } else {
         html+=`<td>${cell}</td>`;
       }
@@ -262,7 +384,42 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   });
 
   html+="</table>";
-  document.getElementById("table1").innerHTML=html;
+  table1.innerHTML=html;
+});
+
+/* STATS */
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&output=csv")
+.then(r=>r.text())
+.then(data=>{
+  let rows=data.trim().split("\n").map(r=>r.split(","));
+
+  let html="<table>";
+  rows.forEach((row,i)=>{
+    html+="<tr>";
+    row.forEach(c=>html+= i===0?`<th>${c}</th>`:`<td>${c}</td>`);
+    html+="</tr>";
+  });
+
+  html+="</table>";
+  table2.innerHTML=html;
+});
+
+/* POT */
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=669574522&output=csv")
+.then(r=>r.text())
+.then(data=>{
+  let rows=data.trim().split("\n").map(r=>r.split(","));
+
+  let total=0, html="";
+  rows.slice(1).forEach(row=>{
+    let val=parseFloat(row[1].replace(/[$,]/g,""))||0;
+    total+=val;
+    html+=`<div class="pot-card"><div class="pot-title">${row[0]}</div><div class="pot-value">$${val}</div></div>`;
+  });
+
+  html=`<div class="pot-card total"><div>Total</div><div class="pot-value">$${total}</div></div>`+html;
+
+  potHeader.innerHTML=html;
 });
 </script>
 
