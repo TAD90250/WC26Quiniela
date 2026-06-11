@@ -15,7 +15,6 @@ body {
 
 h1 {
   margin-bottom: 15px;
-  font-size: 22px;
 }
 
 /* ✅ Tabs */
@@ -37,16 +36,15 @@ h1 {
   background: #2563eb;
 }
 
-/* ✅ Tabs content */
+/* ✅ Tabs */
 .tab {
   display: none;
 }
-
 .tab.active {
   display: block;
 }
 
-/* ✅ Tables */
+/* ✅ Container */
 .table-container {
   width: 100%;
   background: #111827;
@@ -54,51 +52,66 @@ h1 {
   overflow-x: hidden;
 }
 
+/* ✅ Table */
 table {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
+/* ✅ Header */
 th {
   background: #1f2937;
   padding: 6px;
   font-size: 10px;
   color: #9ca3af;
+  position: sticky;
+  top: 0;
+  word-break: break-word;
 }
 
+/* ✅ Cells */
 td {
   padding: 6px;
   font-size: 11px;
   border-bottom: 1px solid #374151;
+  word-break: break-word;
 }
 
-/* ✅ POT CARDS */
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  padding: 20px;
-}
-
-.card {
+/* ✅ Hover */
+tr:hover {
   background: #1f2937;
-  padding: 20px;
-  border-radius: 12px;
-  min-width: 150px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-.card-title {
-  font-size: 14px;
-  color: #9ca3af;
-  margin-bottom: 10px;
-}
-
-.card-value {
-  font-size: 22px;
+/* ✅ Rank */
+.rank {
   font-weight: bold;
+  text-align: center;
+}
+
+/* ✅ MEDALS + COLORS */
+.gold { background: #064e3b; }
+.silver { background: #78350f; }
+.bronze { background: #1e3a8a; }
+
+/* ✅ FORCE ONE LINE FOR SPECIFIC COLUMNS */
+
+/* Player column (B visually) */
+#standings th:nth-child(2),
+#standings td:nth-child(2) {
+  white-space: nowrap;
+}
+
+/* Columns D, E, F, G */
+#standings th:nth-child(4),
+#standings th:nth-child(5),
+#standings th:nth-child(6),
+#standings th:nth-child(7),
+#standings td:nth-child(4),
+#standings td:nth-child(5),
+#standings td:nth-child(6),
+#standings td:nth-child(7) {
+  white-space: nowrap;
 }
 
 </style>
@@ -108,7 +121,6 @@ td {
 
 <h1>⚽ Mundial 2026 Quiniela</h1>
 
-<!-- ✅ Tabs -->
 <div class="nav">
   <button class="active" onclick="showTab('standings', this)">Standings</button>
   <button onclick="showTab('stats', this)">Team Stats</button>
@@ -129,7 +141,7 @@ td {
   </div>
 </div>
 
-<!-- ✅ POT -->
+<!-- ✅ Pot -->
 <div id="pot" class="tab">
   <div class="cards" id="potCards">Loading...</div>
 </div>
@@ -143,14 +155,17 @@ function showTab(tabId, btn) {
   btn.classList.add("active");
 }
 
-/* ✅ Standings */
+/* ✅ STANDINGS (with medals restored) */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
+
   let rows = data.trim().split("\n").map(r => r.split(","));
+
   const headers = rows[0];
   let body = rows.slice(1);
 
+  // Sort by last column
   body.sort((a, b) => Number(b[b.length - 1]) - Number(a[a.length - 1]));
 
   let html = "<table>";
@@ -160,13 +175,27 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   html += "</tr>";
 
   body.forEach((row, i) => {
-    html += "<tr>";
-    html += `<td>${i+1}</td>`;
-    row.forEach(cell => html += `<td>${cell}</td>`);
+
+    let medal = "";
+    let cls = "";
+
+    if (i === 0) { medal = "🥇"; cls = "gold"; }
+    else if (i === 1) { medal = "🥈"; cls = "silver"; }
+    else if (i === 2) { medal = "🥉"; cls = "bronze"; }
+
+    html += `<tr class="${cls}">`;
+
+    html += `<td class="rank">${medal || (i + 1)}</td>`;
+
+    row.forEach(cell => {
+      html += `<td>${cell}</td>`;
+    });
+
     html += "</tr>";
   });
 
   html += "</table>";
+
   document.getElementById("table1").innerHTML = html;
 });
 
@@ -191,7 +220,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   document.getElementById("table2").innerHTML = html;
 });
 
-/* ✅ POT (CARDS VERSION) */
+/* ✅ Pot cards stay same */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=669574522&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
@@ -200,22 +229,15 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   let html = "";
 
   rows.slice(1).forEach(row => {
-    const label = row[0];
-    const value = row[1];
-
     html += `
       <div class="card">
-        <div class="card-title">${label}</div>
-        <div class="card-value">${value}</div>
+        <div>${row[0]}</div>
+        <strong>${row[1]}</strong>
       </div>
     `;
   });
 
   document.getElementById("potCards").innerHTML = html;
-})
-.catch(err => {
-  console.error("Pot error:", err);
-  document.getElementById("potCards").innerHTML = "Error loading pot";
 });
 </script>
 
