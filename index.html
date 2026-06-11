@@ -9,12 +9,49 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   background: linear-gradient(135deg, #0f172a, #020617);
   color: white;
-  text-align: center;
   padding: 15px;
 }
 
-h1 {
+/* ✅ HEADER BAR */
+.header {
+  display: flex;
+  justify-content: space-between; /* left + right */
+  align-items: center;
   margin-bottom: 15px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* ✅ POT HEADER CARDS */
+.pot-header {
+  display: flex;
+  gap: 10px;
+}
+
+/* ✅ SMALL POT CARDS */
+.pot-card {
+  background: #1f2937;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 90px;
+}
+
+.pot-card.total {
+  background: #2563eb; /* highlight total */
+}
+
+.pot-title {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.pot-value {
+  font-size: 14px;
+  font-weight: bold;
 }
 
 /* ✅ Tabs */
@@ -37,14 +74,10 @@ h1 {
 }
 
 /* ✅ Tabs */
-.tab {
-  display: none;
-}
-.tab.active {
-  display: block;
-}
+.tab { display: none; }
+.tab.active { display: block; }
 
-/* ✅ Container */
+/* ✅ Table */
 .table-container {
   width: 100%;
   background: #111827;
@@ -52,14 +85,12 @@ h1 {
   overflow-x: hidden;
 }
 
-/* ✅ Table */
 table {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
-/* ✅ Header */
 th {
   background: #1f2937;
   padding: 6px;
@@ -67,46 +98,46 @@ th {
   color: #9ca3af;
   position: sticky;
   top: 0;
-  word-break: break-word;
 }
 
-/* ✅ Cells */
 td {
   padding: 6px;
   font-size: 11px;
   border-bottom: 1px solid #374151;
-  word-break: break-word;
 }
 
-/* ✅ Hover */
-tr:hover {
-  background: #1f2937;
-}
-
-/* ✅ Rank */
 .rank {
   font-weight: bold;
   text-align: center;
 }
 
-/* ✅ MEDALS + COLORS */
+/* ✅ TOP 3 */
 .gold { background: #064e3b; }
 .silver { background: #78350f; }
 .bronze { background: #1e3a8a; }
 
-/* ✅ FORCE ONE LINE FOR SPECIFIC COLUMNS */
+/* ✅ Column tuning */
+#standings th:nth-child(1), #standings td:nth-child(1) { width: 4ch; }
+#standings th:nth-child(3), #standings td:nth-child(3) { width: 8ch; }
+#standings th:nth-child(8), #standings td:nth-child(8) { width: 6ch; }
+#standings th:nth-child(9), #standings td:nth-child(9) { width: 6ch; }
 
-/* Player column (B visually) */
-#standings th:nth-child(2),
-#standings td:nth-child(2) {
+/* spacing */
+#standings th:nth-child(2), #standings td:nth-child(2) {
+  padding-right: 14px;
   white-space: nowrap;
 }
+#standings th:nth-child(7), #standings td:nth-child(7) {
+  padding-right: 14px;
+}
 
-/* Columns D, E, F, G */
+/* force single line B, D–G */
+#standings th:nth-child(2),
 #standings th:nth-child(4),
 #standings th:nth-child(5),
 #standings th:nth-child(6),
 #standings th:nth-child(7),
+#standings td:nth-child(2),
 #standings td:nth-child(4),
 #standings td:nth-child(5),
 #standings td:nth-child(6),
@@ -119,12 +150,18 @@ tr:hover {
 
 <body>
 
-<h1>⚽ Mundial 2026 Quiniela</h1>
+<!-- ✅ HEADER -->
+<div class="header">
+  <div class="title">⚽ Mundial 2026 Quiniela</div>
 
+  <!-- ✅ POT (TOP RIGHT) -->
+  <div class="pot-header" id="potHeader">Loading...</div>
+</div>
+
+<!-- ✅ Tabs -->
 <div class="nav">
   <button class="active" onclick="showTab('standings', this)">Standings</button>
   <button onclick="showTab('stats', this)">Team Stats</button>
-  <button onclick="showTab('pot', this)">Pot</button>
 </div>
 
 <!-- ✅ Standings -->
@@ -141,11 +178,6 @@ tr:hover {
   </div>
 </div>
 
-<!-- ✅ Pot -->
-<div id="pot" class="tab">
-  <div class="cards" id="potCards">Loading...</div>
-</div>
-
 <script>
 function showTab(tabId, btn) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -155,89 +187,83 @@ function showTab(tabId, btn) {
   btn.classList.add("active");
 }
 
-/* ✅ STANDINGS (with medals restored) */
+/* ✅ STANDINGS */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
-
   let rows = data.trim().split("\n").map(r => r.split(","));
-
   const headers = rows[0];
   let body = rows.slice(1);
 
-  // Sort by last column
   body.sort((a, b) => Number(b[b.length - 1]) - Number(a[a.length - 1]));
 
   let html = "<table>";
-
   html += "<tr><th>#</th>";
   headers.forEach(h => html += `<th>${h}</th>`);
   html += "</tr>";
 
   body.forEach((row, i) => {
-
-    let medal = "";
-    let cls = "";
-
-    if (i === 0) { medal = "🥇"; cls = "gold"; }
-    else if (i === 1) { medal = "🥈"; cls = "silver"; }
-    else if (i === 2) { medal = "🥉"; cls = "bronze"; }
+    let medal = "", cls = "";
+    if (i === 0) { medal="🥇"; cls="gold"; }
+    else if (i === 1) { medal="🥈"; cls="silver"; }
+    else if (i === 2) { medal="🥉"; cls="bronze"; }
 
     html += `<tr class="${cls}">`;
-
-    html += `<td class="rank">${medal || (i + 1)}</td>`;
-
-    row.forEach(cell => {
-      html += `<td>${cell}</td>`;
-    });
-
+    html += `<td class="rank">${medal || i+1}</td>`;
+    row.forEach(c => html += `<td>${c}</td>`);
     html += "</tr>";
   });
 
   html += "</table>";
-
   document.getElementById("table1").innerHTML = html;
 });
 
-/* ✅ Team Stats */
+/* ✅ TEAM STATS */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
   let rows = data.trim().split("\n").map(r => r.split(","));
 
   let html = "<table>";
-
-  rows.forEach((row, i) => {
+  rows.forEach((row,i)=>{
     html += "<tr>";
-    row.forEach(cell => {
-      html += i === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
-    });
+    row.forEach(c => html += i===0?`<th>${c}</th>`:`<td>${c}</td>`);
     html += "</tr>";
   });
 
-  html += "</table>";
-
+  html+="</table>";
   document.getElementById("table2").innerHTML = html;
 });
 
-/* ✅ Pot cards stay same */
+/* ✅ POT HEADER */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=669574522&single=true&output=csv")
 .then(res => res.text())
 .then(data => {
   let rows = data.trim().split("\n").map(r => r.split(","));
 
+  let total = 0;
   let html = "";
 
-  rows.slice(1).forEach(row => {
+  rows.slice(1).forEach(row=>{
+    let val = parseFloat(row[1]) || 0;
+    total += val;
+
     html += `
-      <div class="card">
-        <div>${row[0]}</div>
-        <strong>${row[1]}</strong>
+      <div class="pot-card">
+        <div class="pot-title">${row[0]}</div>
+        <div class="pot-value">$${val}</div>
       </div>
     `;
   });
 
-  document.getElementById("potCards").innerHTML = html;
+  html = `
+    <div class="pot-card total">
+      <div class="pot-title">Total</div>
+      <div class="pot-value">$${total}</div>
+    </div>
+  ` + html;
+
+  document.getElementById("potHeader").innerHTML = html;
 });
 </script>
 
