@@ -31,22 +31,13 @@ h1 {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
 }
 
 .nav button.active {
   background: #2563eb;
 }
 
-/* ✅ Container */
-.table-container {
-  width: 100%;
-  background: #111827;
-  border-radius: 12px;
-  overflow-x: hidden;
-}
-
-/* ✅ Tabs */
+/* ✅ Tabs content */
 .tab {
   display: none;
 }
@@ -55,7 +46,14 @@ h1 {
   display: block;
 }
 
-/* ✅ Table */
+/* ✅ Tables */
+.table-container {
+  width: 100%;
+  background: #111827;
+  border-radius: 12px;
+  overflow-x: hidden;
+}
+
 table {
   width: 100%;
   table-layout: fixed;
@@ -67,8 +65,6 @@ th {
   padding: 6px;
   font-size: 10px;
   color: #9ca3af;
-  position: sticky;
-  top: 0;
 }
 
 td {
@@ -77,17 +73,33 @@ td {
   border-bottom: 1px solid #374151;
 }
 
-/* ✅ Content sections (rules/pot) */
-.section {
+/* ✅ POT CARDS */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
   padding: 20px;
-  text-align: left;
 }
 
-/* ✅ Styling */
-.rank { font-weight: bold; }
-.gold { background: #064e3b; }
-.silver { background: #78350f; }
-.bronze { background: #1e3a8a; }
+.card {
+  background: #1f2937;
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 150px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.card-title {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-size: 22px;
+  font-weight: bold;
+}
 
 </style>
 </head>
@@ -100,7 +112,6 @@ td {
 <div class="nav">
   <button class="active" onclick="showTab('standings', this)">Standings</button>
   <button onclick="showTab('stats', this)">Team Stats</button>
-  <button onclick="showTab('rules', this)">Point Rules</button>
   <button onclick="showTab('pot', this)">Pot</button>
 </div>
 
@@ -118,28 +129,9 @@ td {
   </div>
 </div>
 
-<!-- ✅ Point Rules -->
-<div id="rules" class="tab">
-  <div class="table-container section">
-    <h2>📊 Point Rules</h2>
-    <ul>
-      <li>Win = 3 points</li>
-      <li>Draw = 1 point</li>
-      <li>Correct score = bonus points</li>
-      <li>Round winners = additional points</li>
-    </ul>
-  </div>
-</div>
-
-<!-- ✅ Pot -->
+<!-- ✅ POT -->
 <div id="pot" class="tab">
-  <div class="table-container section">
-    <h2>💰 Pot</h2>
-    <p>Total pot: $XXX</p>
-    <p>1st place: XX%</p>
-    <p>2nd place: XX%</p>
-    <p>3rd place: XX%</p>
-  </div>
+  <div class="cards" id="potCards">Loading...</div>
 </div>
 
 <script>
@@ -162,25 +154,15 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   body.sort((a, b) => Number(b[b.length - 1]) - Number(a[a.length - 1]));
 
   let html = "<table>";
+
   html += "<tr><th>#</th>";
   headers.forEach(h => html += `<th>${h}</th>`);
   html += "</tr>";
 
   body.forEach((row, i) => {
-    let medal = "";
-    let cls = "";
-
-    if (i === 0) { medal = "🥇"; cls = "gold"; }
-    else if (i === 1) { medal = "🥈"; cls = "silver"; }
-    else if (i === 2) { medal = "🥉"; cls = "bronze"; }
-
-    html += `<tr class="${cls}">`;
-    html += `<td class="rank">${medal || (i + 1)}</td>`;
-
-    row.forEach((cell, idx) => {
-      html += `<td>${cell}</td>`;
-    });
-
+    html += "<tr>";
+    html += `<td>${i+1}</td>`;
+    row.forEach(cell => html += `<td>${cell}</td>`);
     html += "</tr>";
   });
 
@@ -205,7 +187,35 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   });
 
   html += "</table>";
+
   document.getElementById("table2").innerHTML = html;
+});
+
+/* ✅ POT (CARDS VERSION) */
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=669574522&single=true&output=csv")
+.then(res => res.text())
+.then(data => {
+  let rows = data.trim().split("\n").map(r => r.split(","));
+
+  let html = "";
+
+  rows.slice(1).forEach(row => {
+    const label = row[0];
+    const value = row[1];
+
+    html += `
+      <div class="card">
+        <div class="card-title">${label}</div>
+        <div class="card-value">${value}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("potCards").innerHTML = html;
+})
+.catch(err => {
+  console.error("Pot error:", err);
+  document.getElementById("potCards").innerHTML = "Error loading pot";
 });
 </script>
 
