@@ -457,30 +457,30 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=669574522&output=csv")
 .then(r=>r.text())
 .then(data=>{
-  let rows=data.trim().split("\n").map(r=>r.split(","));
 
-  let total=0, html="";
+let rows=data.trim().split("\n").map(r=>r.split(","));
+
+let total = rows[0][1]; // ✅ take total directly from sheet
+let html="";
+
+// skip first row (since it's total)
 rows.slice(1).forEach(row=>{
-  let raw = row[1] ? row[1].trim() : "0";
-
-  // ✅ remove EVERYTHING except numbers + decimal
-  let cleaned = raw.replace(/[^\d.-]/g, "");
-
-  let val = Number(cleaned);
-
-  if(isNaN(val)) val = 0;
-
-  total += val;
+  let val = row[1];
 
   html += `<div class="pot-card">
     <div class="pot-title">${row[0]}</div>
-    <div class="pot-value">$${val}</div>
+    <div class="pot-value">${val}</div>
   </div>`;
 });
 
-  html=`<div class="pot-card total"><div>Total</div><div class="pot-value">$${total}</div></div>`+html;
+// add total card first
+html = `<div class="pot-card total">
+  <div>Total</div>
+  <div class="pot-value">${total}</div>
+</div>` + html;
 
-  potHeader.innerHTML=html;
+potHeader.innerHTML=html;
+
 });
 </script>
 
