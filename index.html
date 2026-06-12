@@ -460,14 +460,14 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
 
 let rows=data.trim().split("\n").map(r=>r.split(","));
 
-let total = rows[0].slice(1).join(",");
+let total = rows[0].slice(1).join(",").replace(/"/g, "");
 let html="";
   
 // skip first row (since it's total)
 
 rows.slice(1).forEach(row=>{
   // ✅ join everything after column A (fixes commas in numbers)
-  let val = row.slice(1).join(",");
+  let val = row.slice(1).join(",").replace(/"/g, "");
 
   html += `<div class="pot-card">
     <div class="pot-title">${row[0]}</div>
