@@ -460,11 +460,23 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   let rows=data.trim().split("\n").map(r=>r.split(","));
 
   let total=0, html="";
-  rows.slice(1).forEach(row=>{
-    let val=parseFloat(row[1].replace(/[$,]/g,""))||0;
-    total+=val;
-    html+=`<div class="pot-card"><div class="pot-title">${row[0]}</div><div class="pot-value">$${val}</div></div>`;
-  });
+rows.slice(1).forEach(row=>{
+  let raw = row[1] ? row[1].trim() : "0";
+
+  // ✅ remove EVERYTHING except numbers + decimal
+  let cleaned = raw.replace(/[^\d.-]/g, "");
+
+  let val = Number(cleaned);
+
+  if(isNaN(val)) val = 0;
+
+  total += val;
+
+  html += `<div class="pot-card">
+    <div class="pot-title">${row[0]}</div>
+    <div class="pot-value">$${val}</div>
+  </div>`;
+});
 
   html=`<div class="pot-card total"><div>Total</div><div class="pot-value">$${total}</div></div>`+html;
 
