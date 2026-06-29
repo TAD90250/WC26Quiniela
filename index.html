@@ -407,7 +407,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   let headers=rows[0];
   let body=rows.slice(1);
 
-  body.sort((a,b)=>Number(b[b.length-1])-Number(a[a.length-1]));
+  body.sort((a,b)=>Number(b[1]) - Number(a[1]));
 
   let html="<table><tr><th>#</th>";
   headers.forEach(h=>html+=`<th>${h}</th>`);
