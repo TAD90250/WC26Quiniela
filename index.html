@@ -405,103 +405,85 @@ function switchLang(lang, btn) {
   btn.classList.add("active");
 }
 
-
-/* ✅ GLOBAL */
-let eliminatedTeams = {};
-
-/* ✅ LOAD STATS FIRST */
-fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&output=csv")
-.then(r => r.text())
-.then(data => {
-
-  let rows = data.trim().split("\n").map(r => r.split(","));
-  let html = "<table>";
-
-  rows.forEach((row,i)=>{
-    html += "<tr>";
-
-    if(i !== 0){
-      const team = row[0].trim();
-      const status = row[row.length - 1].trim();
-
-      // ✅ store eliminated teams
-      if(status === "Y"){
-        eliminatedTeams[team] = true;
-      }
-    }
-
-    const isActive = i !== 0 && row[row.length - 1].trim() === "N";
-
-    row.forEach((c, idx)=>{
-      if(i === 0){
-        html += `<th>${c}</th>`;
-      } else {
-        const isTargetCol = (idx === 0 || idx === row.length - 1);
-
-        if(isActive && isTargetCol){
-          html += `<td class="eliminated">${c}</td>`;
-        } else {
-          html += `<td>${c}</td>`;
-        }
-      }
-    });
-
-    html += "</tr>";
-  });
-
-  html += "</table>";
-  table2.innerHTML = html;
-
-  /* ✅ NOW LOAD STANDINGS */
-  loadStandings();
-
-});
-
-/* ✅ STANDINGS */
-function loadStandings(){
+/* STANDINGS */
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1458668677&output=csv")
-.then(r => r.text())
+.then(r=>r.text())
 .then(data=>{
+  let rows=data.trim().split("\n").map(r=>r.split(","));
+  let headers=rows[0];
+  let body=rows.slice(1);
 
-  let rows = data.trim().split("\n").map(r=>r.split(","));
-  let headers = rows[0];
-  let body = rows.slice(1);
-
-  // ✅ sort by column B
   body.sort((a,b)=>Number(b[1]) - Number(a[1]));
 
-  let html = "<table><tr><th>#</th>";
-  headers.forEach(h => html += `<th>${h}</th>`);
-  html += "</tr>";
+  let html="<table><tr><th>#</th>";
+  headers.forEach(h=>html+=`<th>${h}</th>`);
+  html+="</tr>";
 
   body.forEach((row,i)=>{
-    let medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":i+1;
+    let medal="",cls="";
+    if(i===0){medal="🥇";cls="gold";}
+    else if(i===1){medal="🥈";cls="silver";}
+    else if(i===2){medal="🥉";cls="bronze";}
 
-    html += `<tr><td>${medal}</td>`;
-
+    html+=`<tr class="${cls}"><td>${medal||i+1}</td>`;
     row.forEach((cell, idx)=>{
-
-      const isTeamColumn = [2,3,4,5].includes(idx);
-      const isEliminated = eliminatedTeams[cell.trim()];
-
-      if(idx === 0){
-        html += `<td>${cell}</td>`;
+      if(idx===0){
+        html+=`<td class="name">${cell}</td>`;
+      } else {
+        html+=`<td>${cell}</td>`;
       }
-      else if(isTeamColumn && isEliminated){
-        html += `<td class="eliminated">${cell}</td>`;
-      }
-      else{
-        html += `<td>${cell}</td>`;
-      }
-
     });
 
-    html += "</tr>";
+
+    html+="</tr>";
   });
 
-  html += "</table>";
-  table1.innerHTML = html;
+  html+="</table>";
+  table1.innerHTML=html;
+});
 
+/* STATS */
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014jg7A8QXXwI_TaHN7gRfZXjs70I-NnK1_sWGolKMGWrN_DpjT8YrnbpM/pub?gid=1485833261&output=csv")
+.then(r=>r.text())
+.then(data=>{
+  let rows=data.trim().split("\n").map(r=>r.split(","));
+
+  let html="<table>";
+
+rows.forEach((row,i)=>{
+  html += "<tr>";
+
+  // ✅ check if this row is eliminated
+  const isEliminated = row[row.length - 1].trim() === "N";
+
+  row.forEach((c, idx)=>{
+    if(i === 0){
+      html += `<th>${c}</th>`;
+    } else {
+
+      // ✅ Column A (index 0) → make yellow if eliminated
+      if(idx === 0 && isEliminated){
+        html += `<td class="eliminated">${c}</td>`;
+      }
+
+      // ✅ Last column (Y/N)
+      else if(idx === row.length - 1 && isEliminated){
+        html += `<td class="eliminated">${c}</td>`;
+      }
+
+      // ✅ Normal cells
+      else {
+        html += `<td>${c}</td>`;
+      }
+
+    }
+  });
+
+  html += "</tr>";
+});
+
+  html+="</table>";
+  table2.innerHTML=html;
 });
 
 /* POT */
