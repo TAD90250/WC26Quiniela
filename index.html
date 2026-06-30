@@ -450,21 +450,37 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
 
   let html="<table>";
 
-  rows.forEach((row,i)=>{
-    html += "<tr>";
-    row.forEach((c, idx)=>{
-      if(i === 0){
-        html += `<th>${c}</th>`;
-      } else {
-        if(idx === row.length - 1 && c.trim() === "Y"){
-          html += `<td class="eliminated">${c}</td>`;
-        } else {
-          html += `<td>${c}</td>`;
-        }
+rows.forEach((row,i)=>{
+  html += "<tr>";
+
+  // ✅ check if this row is eliminated
+  const isEliminated = row[row.length - 1].trim() === "Y";
+
+  row.forEach((c, idx)=>{
+    if(i === 0){
+      html += `<th>${c}</th>`;
+    } else {
+
+      // ✅ Column A (index 0) → make yellow if eliminated
+      if(idx === 0 && isEliminated){
+        html += `<td class="eliminated">${c}</td>`;
       }
-    });
-    html += "</tr>";
+
+      // ✅ Last column (Y/N)
+      else if(idx === row.length - 1 && isEliminated){
+        html += `<td class="eliminated">${c}</td>`;
+      }
+
+      // ✅ Normal cells
+      else {
+        html += `<td>${c}</td>`;
+      }
+
+    }
   });
+
+  html += "</tr>";
+});
 
   html+="</table>";
   table2.innerHTML=html;
