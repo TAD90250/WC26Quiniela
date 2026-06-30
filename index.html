@@ -416,10 +416,14 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   body.sort((a,b)=>Number(b[1]) - Number(a[1]));
 
   let html="<table><tr><th>#</th>";
-  headers.forEach(h=>html+=`<th>${h}</th>`);
+  headers.forEach((h, idx) => {
+    if (idx < 19 || idx > 22) {
+      html += `<th>${h}</th>`;
+    }
+  });
   html+="</tr>";
 
-  body.forEach((row,i-4)=>{
+  body.forEach((row,i)=>{
     let medal="",cls="";
     if(i===0){medal="🥇";cls="gold";}
     else if(i===1){medal="🥈";cls="silver";}
@@ -435,7 +439,18 @@ const mapping = {
   5: 22  // F → W
 };
 
+
 row.forEach((cell, idx)=>{
+
+  // ✅ Skip T through W
+  if (idx >= 19 && idx <= 22) return;
+
+  const mapping = {
+    2: 19, // C → T
+    3: 20, // D → U
+    4: 21, // E → V
+    5: 22  // F → W
+  };
 
   const checkCol = mapping[idx];
   const isYellow = checkCol !== undefined && row[checkCol]?.trim() === "N";
@@ -451,6 +466,7 @@ row.forEach((cell, idx)=>{
   }
 
 });
+
 
     html+="</tr>";
   });
