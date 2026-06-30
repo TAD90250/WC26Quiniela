@@ -419,7 +419,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
   headers.forEach(h=>html+=`<th>${h}</th>`);
   html+="</tr>";
 
-  body.forEach((row,i)=>{
+  body.forEach((row,i-4)=>{
     let medal="",cls="";
     if(i===0){medal="🥇";cls="gold";}
     else if(i===1){medal="🥈";cls="silver";}
