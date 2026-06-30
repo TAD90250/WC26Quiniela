@@ -427,23 +427,31 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTraDGWjLk65weF-hpQFe014j
 
     html+=`<tr class="${cls}"><td>${medal||i+1}</td>`;
 
-    row.forEach((cell, idx)=>{
 
-      const colT = row[19]?.trim(); // Column T
-      const isActive = colT === "N";
-      const isColumnC = idx === 2;
+  row.forEach((cell, idx)=>{
 
-      if(idx === 0){
-        html += `<td class="name">${cell}</td>`;
-      }
-      else if(isColumnC && isActive){
-        html += `<td class="eliminated">${cell}</td>`;
-      }
-      else{
-        html += `<td>${cell}</td>`;
-      }
+    const colT = row[19]?.trim();
+    const colU = row[20]?.trim();
+    const colV = row[21]?.trim();
+    const colW = row[22]?.trim();
 
-    });
+    const isYellow =
+      (idx === 2 && colT === "N") ||
+      (idx === 3 && colU === "N") ||
+      (idx === 4 && colV === "N") ||
+      (idx === 5 && colW === "N");
+
+    if(idx === 0){
+      html += `<td class="name">${cell}</td>`;
+    }
+    else if(isYellow){
+      html += `<td class="eliminated">${cell}</td>`;
+    }
+    else{
+      html += `<td>${cell}</td>`;
+   }
+  });
+
 
     html+="</tr>";
   });
